@@ -170,7 +170,7 @@ export default class PostList extends React.Component {
             let sameRoot = false;
             let hideProfilePic = false;
 
-            if (prevPost) {
+            if (prevPost && !this.props.ignoreCombinePostRules) {
                 const postIsComment = PostUtils.isComment(post);
                 const prevPostIsComment = PostUtils.isComment(prevPost);
                 const postFromWebhook = Boolean(post.props && post.props.from_webhook);
@@ -188,21 +188,6 @@ export default class PostList extends React.Component {
                     sameUser = true;
                 }
 
-                // consider posts from the same root if:
-                //     the current post is a comment,
-                //     the current post has the same root as the previous post
-                if (postIsComment && (prevPost.id === post.root_id || prevPost.root_id === post.root_id)) {
-                    sameRoot = true;
-                }
-
-                // consider posts from the same root if:
-                //     the current post is not a comment,
-                //     the previous post is not a comment,
-                //     the previous post is from the same user
-                if (!postIsComment && !prevPostIsComment && sameUser) {
-                    sameRoot = true;
-                }
-
                 // hide the profile pic if:
                 //     the previous post was made by the same user as the current post,
                 //     the previous post is not a comment,
@@ -217,6 +202,28 @@ export default class PostList extends React.Component {
                     hideProfilePic = true;
                 }
             }
+            if (prevPost) {
+                const postIsComment = PostUtils.isComment(post);
+                const prevPostIsComment = PostUtils.isComment(prevPost);
+                const postFromWebhook = Boolean(post.props && post.props.from_webhook);
+                const prevPostFromWebhook = Boolean(prevPost.props && prevPost.props.from_webhook);
+                const prevPostUserId = PostUtils.isSystemMessage(prevPost) ? '' : prevPost.user_id;
+                // consider posts from the same root if:
+                //     the current post is a comment,
+                //     the current post has the same root as the previous post
+                if (postIsComment && (prevPost.id === post.root_id || prevPost.root_id === post.root_id)) {
+                    sameRoot = true;
+                }
+
+                // consider posts from the same root if:
+                //     the current post is not a comment,
+                //     the previous post is not a comment,
+                //     the previous post is from the same user
+                if (!postIsComment && !prevPostIsComment && sameUser) {
+                    sameRoot = true;
+                }
+            }
+
 
             // check if it's the last comment in a consecutive string of comments on the same post
             // it is the last comment if it is last post in the channel or the next post has a different root post
@@ -265,6 +272,7 @@ export default class PostList extends React.Component {
                     compactDisplay={this.props.compactDisplay}
                     previewCollapsed={this.props.previewsCollapsed}
                     useMilitaryTime={this.props.useMilitaryTime}
+                    indentComments={this.props.ignoreCombinePostRules}
                 />
             );
 
@@ -527,5 +535,6 @@ PostList.propTypes = {
     compactDisplay: React.PropTypes.bool,
     previewsCollapsed: React.PropTypes.string,
     useMilitaryTime: React.PropTypes.bool.isRequired,
+    ignoreCombinePostRules: React.PropTypes.bool.isRequired,
     isFocusPost: React.PropTypes.bool
 };

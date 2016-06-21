@@ -80,6 +80,10 @@ export default class Post extends React.Component {
             return true;
         }
 
+        if (nextProps.indentComments !== this.props.indentComments) {
+            return true;
+        }
+
         if (!Utils.areObjectsEqual(nextProps.user, this.props.user)) {
             return true;
         }
@@ -170,11 +174,16 @@ export default class Post extends React.Component {
             compactClass = 'post--compact';
         }
 
+        let indentCommentsClass = '';
+        if (this.props.indentComments) {
+            indentCommentsClass = 'comment--indent';
+        }
+
         return (
             <div>
                 <div
                     id={'post_' + post.id}
-                    className={'post ' + sameUserClass + ' ' + compactClass + ' ' + rootUser + ' ' + postType + ' ' + currentUserCss + ' ' + shouldHighlightClass + ' ' + systemMessageClass}
+                    className={'post ' + sameUserClass + ' ' + compactClass + ' ' + rootUser + ' ' + postType + ' ' + currentUserCss + ' ' + shouldHighlightClass + ' ' + systemMessageClass + indentCommentsClass}
                 >
                     <div className={'post__content ' + centerClass}>
                         <div className='post__img'>{profilePic}</div>
@@ -223,6 +232,7 @@ Post.propTypes = {
     currentUser: React.PropTypes.object.isRequired,
     center: React.PropTypes.bool,
     compactDisplay: React.PropTypes.bool,
+    indentComments: React.PropTypes.bool,
     previewCollapsed: React.PropTypes.string,
     commentCount: React.PropTypes.number,
     useMilitaryTime: React.PropTypes.bool.isRequired

@@ -628,6 +628,9 @@ body.ios {
             border-left: 4px solid $gray;
             padding-left: 7px;
         }
+        &.comment--indent {
+            margin-left: 42px;
+        }
     }
 
     &.same--root {
