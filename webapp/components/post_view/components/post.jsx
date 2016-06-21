@@ -184,6 +184,8 @@ export default class Post extends React.Component {
                 <div
                     id={'post_' + post.id}
                     className={'post ' + sameUserClass + ' ' + compactClass + ' ' + rootUser + ' ' + postType + ' ' + currentUserCss + ' ' + shouldHighlightClass + ' ' + systemMessageClass + indentCommentsClass}
+                    onMouseOver={() => this.props.mouseOver(post.root_id ? post.root_id : post.id)}
+                    onMouseOut={() => this.props.mouseOut(post.root_id ? post.root_id : post.id)}
                 >
                     <div className={'post__content ' + centerClass}>
                         <div className='post__img'>{profilePic}</div>

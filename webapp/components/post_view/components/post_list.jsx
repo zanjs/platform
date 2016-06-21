@@ -37,6 +37,8 @@ export default class PostList extends React.Component {
         this.handleResize = this.handleResize.bind(this);
         this.scrollToBottom = this.scrollToBottom.bind(this);
         this.scrollToBottomAnimated = this.scrollToBottomAnimated.bind(this);
+        this.handlePostHover = this.handlePostHover.bind(this);
+        this.handlePostUnhover = this.handlePostUnhover.bind(this);
 
         this.jumpToPostNode = null;
         this.wasAtBottom = true;
@@ -52,8 +54,17 @@ export default class PostList extends React.Component {
 
         this.state = {
             isScrolling: false,
-            topPostId: null
+            topPostId: null,
+            hoveredPost: ''
         };
+    }
+
+    handlePostHover(id) {
+        this.setState({hoveredPost: id});
+    }
+
+    handlePostUnhover(id) {
+        this.setState({hoveredPost: ''});
     }
 
     isAtBottom() {
@@ -231,7 +242,7 @@ export default class PostList extends React.Component {
 
             const keyPrefix = post.id ? post.id : i;
 
-            const shouldHighlight = this.props.postsToHighlight && this.props.postsToHighlight.hasOwnProperty(post.id);
+            let shouldHighlight = this.props.postsToHighlight && this.props.postsToHighlight.hasOwnProperty(post.id);
 
             let profile;
             if (userId === post.user_id) {
@@ -251,6 +262,10 @@ export default class PostList extends React.Component {
                 if (posts[postId].root_id === commentRootId) {
                     commentCount += 1;
                 }
+            }
+
+            if (this.state.hoveredPost != '' && (this.state.hoveredPost === post.root_id || this.state.hoveredPost === post.id)) {
+                shouldHighlight = true;
             }
 
             const postCtl = (
@@ -273,6 +288,8 @@ export default class PostList extends React.Component {
                     previewCollapsed={this.props.previewsCollapsed}
                     useMilitaryTime={this.props.useMilitaryTime}
                     indentComments={this.props.ignoreCombinePostRules}
+                    mouseOver={this.handlePostHover}
+                    mouseOut={this.handlePostUnhover}
                 />
             );
 
